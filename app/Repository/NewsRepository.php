@@ -8,8 +8,13 @@
 
     class NewsRepository
     {
-        public function getFilteredNewsPaginate ( $count  )
+        public function getFilteredAndPaginate (int $count  )
         {
             return News::paginate($count);
+        }
+        
+        public function storeNews (array $validatedDatas  )
+        {
+            return News::create($validatedDatas);
         }
     }

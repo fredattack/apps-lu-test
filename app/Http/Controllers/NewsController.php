@@ -2,6 +2,8 @@
     
     namespace App\Http\Controllers;
     
+    use App\Http\Requests\NewsRequest;
+    use App\Models\News;
     use App\Repository\NewsRepository;
     use Illuminate\Http\Request;
     use Response;
@@ -16,21 +18,13 @@
     
         public function index ()
         {
-           return Response::json($this->repository->getFilteredNewsPaginate ( 10));
+           return Response::json($this->repository->getFilteredAndPaginate ( 10));
         }
         
-       
         
-        /**
-         * Store a newly created resource in storage.
-         *
-         * @param Request $request
-         *
-         * @return \Illuminate\Http\Response
-         */
-        public function store ( Request $request )
+        public function store ( NewsRequest $request )
         {
-            //
+            return Response::json($this->repository->storeNews ( $request->validated ()),201);
         }
         
       
@@ -41,7 +35,7 @@
          *
          * @return \Illuminate\Http\Response
          */
-        public function edit ( $id )
+        public function edit ( News $news )
         {
             //
         }
@@ -54,7 +48,7 @@
          *
          * @return \Illuminate\Http\Response
          */
-        public function update ( Request $request , $id )
+        public function update ( NewsRequest $request , News $news )
         {
             //
         }
