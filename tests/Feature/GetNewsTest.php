@@ -42,6 +42,7 @@ class GetNewsTest extends TestCase
             'content' => $this -> faker -> paragraph ( 3 , true ) ,
             'is_published' => $this -> faker -> boolean ( 85 ) ,
         ];
+        
         $this->assertDatabaseMissing ( 'news' , $newsRequestBodyArray);
         
         $response = $this->post( route( 'news.store'), $newsRequestBodyArray );
@@ -58,11 +59,13 @@ class GetNewsTest extends TestCase
             'content' => $this -> faker -> paragraph ( 3 , true ) ,
             'is_published' => $this -> faker -> boolean ( 85 ) ,
         ];
+        
         $this->assertDatabaseMissing ( 'news' , $newsRequestBodyArray);
         
         $response = $this->post( route( 'news.store'), $newsRequestBodyArray );
         
         $response->assertStatus(422);
+        
         $response->assertSeeText  ( 'The title field is required.');
         
         $this->assertDatabaseMissing  ( 'news' , $newsRequestBodyArray);
@@ -81,7 +84,6 @@ class GetNewsTest extends TestCase
         
         $response->assertStatus(422);
         $response->assertSeeText  ( 'The content field is required.');
-        
         $this->assertDatabaseMissing  ( 'news' , $newsRequestBodyArray);
         
     }
@@ -98,9 +100,24 @@ class GetNewsTest extends TestCase
         
         $response->assertStatus(422);
         $response->assertSeeText  ( 'The published field is required.');
-        
         $this->assertDatabaseMissing  ( 'news' , $newsRequestBodyArray);
         
     }
-   
+    
+    public function test_a_user_can_update_a_news_in_db (  )
+    {
+        $news= News::factory()->create();
+        $newsUpdateRequestBodyArray = [
+            'title' => $this -> faker -> sentence ( 6 , true ) ,
+            'content' => $this -> faker -> paragraph ( 3 , true ) ,
+            'is_published' => $this -> faker -> boolean ( 85 ) ,
+        ];
+        
+        $this->assertDatabaseMissing ( 'news' , $newsUpdateRequestBodyArray);
+        
+        $response = $this->put( route( 'news.update',$news), $newsUpdateRequestBodyArray );
+        $response->assertStatus(204);
+        $this->assertDatabaseHas ( 'news' , [...$newsUpdateRequestBodyArray]);
+        
+    }
 }

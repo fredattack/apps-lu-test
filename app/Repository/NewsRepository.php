@@ -17,4 +17,9 @@
         {
             return News::create($validatedDatas);
         }
+    
+        public function update (News $news, array $validatedDatas )
+        {
+            return $news->update($validatedDatas);
+        }
     }

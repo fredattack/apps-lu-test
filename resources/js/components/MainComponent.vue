@@ -1,23 +1,53 @@
 <template>
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">Main Component</div>
+      <add-news-button-component
+          @show:form="displayForm"
+          :active="showForm"
+          v-if="Object.keys(news).length === 0 ">
 
-                    <div class="card-body">
-                        I'm an example component.
-                    </div>
-                </div>
-            </div>
-        </div>
+      </add-news-button-component>
+      <news-form-component
+          v-if="Object.keys(news).length !== 0 || showForm" :news="news"
+          @submit:form="refreshList">
+      </news-form-component>
+
+      <news-list-component
+          @edit:news="newsSelected">
+
+      </news-list-component>
+
     </div>
 </template>
 
 <script>
+    import AddNewsButtonComponent from './AddNewsButtonComponent'
+    import NewsFormComponent from './NewsFormComponent'
+    import NewsListComponent from './NewsListComponent'
+
     export default {
-        mounted() {
-            console.log('Component mounted.')
+      data(){
+        return {
+          news:{},
+          showForm:false
+
         }
+      },
+      components: {
+        AddNewsButtonComponent,NewsFormComponent,NewsListComponent
+      },
+      methods:{
+        newsSelected:function (value){
+          this.news = value
+        },
+        displayForm:function (value){
+          this.showForm = value
+          this.news ={}
+        },
+        refreshList:function (value){
+          console.log(value)
+        }
+
+
+      }
     }
 </script>

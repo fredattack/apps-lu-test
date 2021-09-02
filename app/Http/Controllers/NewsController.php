@@ -28,29 +28,15 @@
         }
         
       
-        /**
-         * Show the form for editing the specified resource.
-         *
-         * @param $id
-         *
-         * @return \Illuminate\Http\Response
-         */
         public function edit ( News $news )
         {
-            //
+            return Response::json ($news);
         }
         
-        /**
-         * Update the specified resource in storage.
-         *
-         * @param Request $request
-         * @param         $id
-         *
-         * @return \Illuminate\Http\Response
-         */
         public function update ( NewsRequest $request , News $news )
         {
-            //
+            $this->repository->update($news,$request->validated());
+            return Response::json ('news successfully updated',204);
         }
         
         /**
