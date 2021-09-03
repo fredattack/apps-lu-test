@@ -10,7 +10,7 @@
     {
         public function getFilteredAndPaginate (int $count  )
         {
-            return News::paginate($count);
+            return News::latest()->paginate($count);
         }
         
         public function storeNews (array $validatedDatas  )

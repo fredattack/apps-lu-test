@@ -15,15 +15,14 @@ export default {
   data(){
     return {
       btnText : 'Add News',
-
+      showButton : this.active
     }
   },
   props :['active'],
   methods:{
     showForm: function (){
-     this.active = !this.active
-      this.$emit('show:form',this.active);
-     this.btnText = this.active ? 'Cancel' :  'Add News'
+     this.showButton = !this.showButton
+      this.$emit('show:form',this.showButton);
     }
   }
 }
