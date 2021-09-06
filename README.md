@@ -17,9 +17,11 @@ You can :
 - **display all news(50) paginate by 10**
 - **create news**
 - **update news**
-- **request datas are backend validated**
+- **request data are backend validated**
 - **delete news**
 - **within 5 seconds you can undo delete news**
 - **add existing tags(10) to a news or add newly created**
 - **search in tags list on title nor content**
 - **filter news by tags**
+- **Backend is fully tested with phpUnit**
+
