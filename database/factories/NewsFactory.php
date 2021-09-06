@@ -23,7 +23,7 @@ class NewsFactory extends Factory
     {
         return [
             'title'=>$this->faker->sentence(8, true),
-            'content'=>$this->faker->paragraph(3, true),
+            'content'=>$this->faker->text(),
             'is_published'=>$this->faker->boolean (85),
             'created_at'=>$this->faker->dateTime (),
             'updated_at'=>$this->faker->dateTime ()

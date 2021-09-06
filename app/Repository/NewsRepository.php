@@ -1,25 +1,59 @@
 <?php
     
-    
     namespace App\Repository;
     
     
     use App\Models\News;
-
+    use App\Services\News\PrepareTagsForSync;
+    
     class NewsRepository
     {
-        public function getFilteredAndPaginate (int $count  )
+        
+        
+        private PrepareTagsForSync $prepare_tags_service;
+        
+        public function __construct ( PrepareTagsForSync $prepare_tags_service )
         {
-            return News::latest()->paginate($count);
+            $this -> prepare_tags_service = $prepare_tags_service;
         }
         
-        public function storeNews (array $validatedDatas  )
+        public function getFilteredAndPaginate ( int $count )
         {
-            return News::create($validatedDatas);
+            return News :: with ( [ 'tags' ] )
+                -> when ( request () -> has ( 'searchTerms' ) , function ( $q ) {
+                    return $q -> where ( 'title' , 'like' , '%' . request ( "searchTerms" ) . '%' )
+                        -> orWhere ( 'content' , 'like' , '%' . request ( "searchTerms" ) . '%' );
+                } ) -> latest () -> paginate ( $count );
         }
-    
-        public function update (News $news, array $validatedDatas )
+        
+        public function storeNews ( array $validatedDatas )
         {
-            return $news->update($validatedDatas);
+            
+            $news = News ::create ( \Arr ::except ( $validatedDatas , 'tags' ) );
+            
+            
+            $this -> syncTasks ( $news , $validatedDatas );
+            
+            return $news;
+        }
+        
+        public function update ( News $news , array $validatedDatas )
+        {
+            $news -> update ( $validatedDatas );
+            
+            $this -> syncTasks ( $news , $validatedDatas);
+            
+            return $news;
+        }
+        
+        protected function syncTasks ( News $news , array $validatedDatas ) : void
+        {
+            if ( isset( $validatedDatas[ 'tags' ] ) ) {
+                $news -> tags () -> sync ( $this -> prepare_tags_service -> handel ( $validatedDatas[ 'tags' ]  ) );
+            }else{
+                $news -> tags () -> detach();
+            }
+            
+            
         }
     }

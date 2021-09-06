@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\News;
+use App\Models\Tag;
 use Illuminate\Database\Seeder;
 
 class NewsSeeder extends Seeder
@@ -14,6 +15,11 @@ class NewsSeeder extends Seeder
      */
     public function run()
     {
-        News::factory()->count(50)->create();
+        News::factory()->count(50)->create()->each(
+            function (News $news){
+                $news->tags()->sync(Tag::inRandomOrder()->limit(rand(1,5))->get());
+            }
+        );
+        
     }
 }

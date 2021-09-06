@@ -1,5 +1,6 @@
 <?php
     
+    use App\Http\Controllers\GetTagsControllerForSelectController;
     use App\Http\Controllers\NewsController;
     use Illuminate\Support\Facades\Route;
 
@@ -19,3 +20,8 @@ Route::get('/', function () {
 });
 
 Route::resource ( 'news' , NewsController::class)->except ( ['create','show']);
+
+Route::get('news-undo-delete/{id}',[NewsController::class,'undoDelete'])->name('news.undo-delete');
+
+Route::get('tags-select',GetTagsControllerForSelectController::class);
+

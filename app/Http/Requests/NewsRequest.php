@@ -29,6 +29,7 @@ class NewsRequest extends FormRequest
             "title"=>["string","required"],
             "content"=>["string","required"],
             "is_published"=>["boolean","required"],
+            "tags"=>["array","nullable"]
             //
         ];
     }

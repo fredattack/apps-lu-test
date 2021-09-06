@@ -9,16 +9,28 @@
           <div class="col-8 ">
             <div class="mb-3">
               <label for="titleInput" class="form-label">Title</label>
-              <input type="email" class="form-control" id="titleInput" v-model="news.title">
+              <input type="email" class="form-control" id="titleInput" v-model.trim="news.title">
+              <p class="text-danger" v-if="'title' in errors">{{ errors.title.join() }}</p>
             </div>
             <div class="mb-3">
               <label for="contentInput" class="form-label">Content</label>
               <vue-editor v-model="news.content" id="contentInput"></vue-editor>
-
+              <p class="text-danger" v-if="'content' in errors">{{ errors.content.join() }}</p>
+            </div>
+            <div class="mb-3">
+              <v-select multiple placeholder="Add Tags"
+                        @open="fetchOptions"
+                        :options="options"
+                        label="name"
+                        :taggable="true"
+                        v-model="news.tags"
+                        :create-option="option => option.toLowerCase()">
+                >
+              </v-select>
             </div>
             <div class="mb-3 px-5">
               <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="SwitchIsPublished" v-model="news.is_published">
+                <input class="form-check-input" type="checkbox" id="SwitchIsPublished" v-model.trim="news.is_published">
                 <label class="form-check-label" for="SwitchIsPublished">publish</label>
               </div>
             </div>
@@ -33,47 +45,60 @@
 </template>
 
 <script>
-import { VueEditor } from "vue2-editor";
+import {VueEditor} from "vue2-editor";
 
 export default {
-  components:{VueEditor},
+  components: {VueEditor},
   name: "NewsFormComponent",
-/*
-  data(){
+  data() {
     return {
-      editor: null,
+      errors: {},
+      options: [],
+      selected: [],
     }
   },
-  mounted() {
-    this.editor = new Editor({
-      content: '<p>Default Content Here</p>',
-      extensions: [
-        StarterKit,
-      ],
-    })
+  watch: {
+    selected(current) {
+      console.log('selected', current)
+    }
   },
-  beforeUnmount() {
-    this.editor.destroy()
-  },*/
+
+
   methods: {
+    fetchOptions: async function () {
+      this.options = []
+      await axios.get(`/tags-select`,).then(({data}) => {
+        this.options = data
+      }).catch(({response}) => {
+        console.error(response)
+      })
+    },
     sendForm: async function () {
       let request
       let dataRequest = {...this.news, is_published: 'is_published' in this.news}
-      console.log('news', dataRequest)
+
       if (this.news.id) {
         request = axios.put(`/news/${this.news.id}`, dataRequest);
       } else {
         request = axios.post(`/news`, dataRequest);
       }
+
       await request.then(({data}) => {
         this.$emit('submit:form', data)
+        this.$emit('toggle:form')
       }).catch(({response}) => {
+        this.errors = response.data
+        console.log('this.error')
         console.error('errorr', response)
       })
     },
     resetForm: function () {
       this.$emit('toggle:form')
-    }
+    },
+   /* addOption: function (option) {
+      console.log('addOption', option)
+      this.selected.push(option)
+    },*/
   },
   props: ['news'],
 }
