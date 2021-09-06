@@ -18,7 +18,6 @@
             parent ::setUp ();
             $this -> setUpFaker ();
             
-            
         }
         
         public function test_a_user_can_get_all_news_paginate_by_10 ()
